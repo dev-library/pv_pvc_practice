@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce       # ReadWriteOnce인 pv와 마운트
+  resources:
+    requests:
+      storage: 5Gi          # 최소 5Gi인 pv와 마운트
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pv-mount-container
+spec:
+  containers:
+    - name: pv-mount-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: example-volume
+        mountPath: /mnt
+  volumes:
+  - name : example-volume
+    persistentVolumeClaim:
+      claimName: example-pvc    # example-pvc를 이용해 pv와 연결
